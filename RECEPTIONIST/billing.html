@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Billing Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>PetCare Clinic</h2>
+        <p class="small-text">Receptionist Panel</p>
+
+        <ul>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="owners.html">Pet Owners</a></li>
+            <li><a href="pets.html">Pets</a></li>
+            <li><a href="appointments.html">Appointments</a></li>
+            <li><a href="billing.html" class="active">Billing</a></li>
+            <li><a href="reports.html">Reports</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <div class="header">
+            <h2>Billing Management</h2>
+            <p>Welcome, Receptionist!</p>
+        </div>
+
+        <!-- Billing Form -->
+        <div class="appointment-section">
+
+            <h2>Generate New Bill</h2>
+
+            <form id="billingForm">
+
+                <label>Select Pet</label>
+                <select id="billPet" required>
+                    <option value="">Select Pet</option>
+                </select>
+
+                <label>Owner Name</label>
+                <input type="text" id="billOwner" readonly>
+
+                <label>Consultation Fee (₹)</label>
+                <input type="number" id="consultationFee"
+                value="300" min="0" required>
+
+                <label>Medicine Charges (₹)</label>
+                <input type="number" id="medicineFee"
+                value="0" min="0" required>
+
+                <label>Other Charges (₹)</label>
+                <input type="number" id="otherFee"
+                value="0" min="0" required>
+
+                <label>Payment Status</label>
+                <select id="paymentStatus" required>
+                    <option value="Paid">Paid</option>
+                    <option value="Pending">Pending</option>
+                </select>
+
+                <button type="submit">Generate Bill</button>
+
+            </form>
+
+        </div>
+
+        <!-- Bill Records -->
+        <div class="appointment-section">
+
+            <h2>Billing Records</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bill ID</th>
+                        <th>Pet Name</th>
+                        <th>Owner</th>
+                        <th>Total Amount</th>
+                        <th>Payment</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="billList"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
