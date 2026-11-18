@@ -1,28 +1,51 @@
+// ==================================================
+// PETCARE CLINIC MANAGEMENT SYSTEM
+// This file controls forms, tables and saved records.
+// ==================================================
 
-// ==========================================
-// 1. OWNER MANAGEMENT
-// ==========================================
+// Read saved information from the browser.
+function getSavedData(key) {
+    let data = localStorage.getItem(key);
 
+    if (data === null) {
+        return [];
+    }
+
+    return JSON.parse(data);
+}
+
+// Save information in the browser.
+function saveData(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+}
+
+// ==================================================
+// 1. PET OWNER MANAGEMENT
+// ==================================================
+
+let owners = getSavedData("owners");
 let ownerForm = document.getElementById("ownerForm");
-let owners = JSON.parse(localStorage.getItem("owners")) || [];
 
-function displayOwners() {
+function displayOwners(listToShow) {
     let ownerList = document.getElementById("ownerList");
 
     if (!ownerList) return;
 
     ownerList.innerHTML = "";
 
-    owners.forEach(function(owner, index) {
+    // Show every owner in the list.
+    listToShow.forEach(function(owner) {
+        let ownerIndex = owners.findIndex(function(item) {
+            return item.id === owner.id;
+        });
+
         ownerList.innerHTML += `
             <tr>
                 <td>${owner.id}</td>
                 <td>${owner.name}</td>
                 <td>${owner.phone}</td>
                 <td>${owner.email}</td>
-                <td>
-                    <button onclick="deleteOwner(${index})">Delete</button>
-                </td>
+                <td><button onclick="deleteOwner(${ownerIndex})">Delete</button></td>
             </tr>
         `;
     });
@@ -32,103 +55,69 @@ if (ownerForm) {
     ownerForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        let name = document.getElementById("ownerName").value;
-        let phone = document.getElementById("phone").value;
-        let email = document.getElementById("email").value;
-        let address = document.getElementById("address").value;
-
         let newOwner = {
             id: Date.now(),
-            name: name,
-            phone: phone,
-            email: email,
-            address: address
+            name: document.getElementById("ownerName").value,
+            phone: document.getElementById("phone").value,
+            email: document.getElementById("email").value,
+            address: document.getElementById("address").value
         };
 
         owners.push(newOwner);
-
-        localStorage.setItem("owners", JSON.stringify(owners));
+        saveData("owners", owners);
 
         alert("Owner registered successfully!");
-
         ownerForm.reset();
-        displayOwners();
+        displayOwners(owners);
     });
 }
 
+// Delete one owner using its position in the array.
 function deleteOwner(index) {
     if (confirm("Are you sure you want to delete this owner?")) {
         owners.splice(index, 1);
-
-        localStorage.setItem("owners", JSON.stringify(owners));
-
-        displayOwners();
+        saveData("owners", owners);
+        displayOwners(owners);
     }
 }
 
-displayOwners();
-
-
-// ==========================================
-// 2. OWNER SEARCH
-// ==========================================
-
+// Search owners by name or phone number.
 let searchOwner = document.getElementById("searchOwner");
 
 if (searchOwner) {
     searchOwner.addEventListener("input", function() {
+        let searchText = searchOwner.value.toLowerCase();
 
-        let searchValue = searchOwner.value.toLowerCase();
-        let ownerList = document.getElementById("ownerList");
-
-        ownerList.innerHTML = "";
-
-        let filteredOwners = owners.filter(function(owner) {
-            return owner.name.toLowerCase().includes(searchValue) ||
-                   owner.phone.includes(searchValue);
+        let matchingOwners = owners.filter(function(owner) {
+            return owner.name.toLowerCase().includes(searchText) ||
+                   owner.phone.includes(searchText);
         });
 
-        filteredOwners.forEach(function(owner) {
-
-            let index = owners.findIndex(function(item) {
-                return item.id === owner.id;
-            });
-
-            ownerList.innerHTML += `
-                <tr>
-                    <td>${owner.id}</td>
-                    <td>${owner.name}</td>
-                    <td>${owner.phone}</td>
-                    <td>${owner.email}</td>
-                    <td>
-                        <button onclick="deleteOwner(${index})">Delete</button>
-                    </td>
-                </tr>
-            `;
-        });
+        displayOwners(matchingOwners);
     });
 }
 
+displayOwners(owners);
 
-// ==========================================
-// 3. PET MANAGEMENT
-// ==========================================
+// ==================================================
+// 2. PET MANAGEMENT
+// ==================================================
 
+let pets = getSavedData("pets");
 let petForm = document.getElementById("petForm");
-let pets = JSON.parse(localStorage.getItem("pets")) || [];
-let savedOwners = JSON.parse(localStorage.getItem("owners")) || [];
 
 function loadOwners() {
-    let petOwner = document.getElementById("petOwner");
+    let ownerDropdown = document.getElementById("petOwner");
 
-    if (!petOwner) return;
+    if (!ownerDropdown) return;
 
-    petOwner.innerHTML = '<option value="">Select Owner</option>';
+    ownerDropdown.innerHTML = '<option value="">Select Owner</option>';
 
-    savedOwners = JSON.parse(localStorage.getItem("owners")) || [];
+    // Add saved owners to the dropdown.
+    owners = getSavedData("owners");
 
-    savedOwners.forEach(function(owner) {
-        petOwner.innerHTML += `
+    owners.forEach(function(owner) {
+        ownerDropdown.innerHTML += `
             <option value="${owner.id}">${owner.name}</option>
         `;
     });
@@ -151,9 +140,7 @@ function displayPets() {
                 <td>${pet.age}</td>
                 <td>${pet.gender}</td>
                 <td>${pet.ownerName}</td>
-                <td>
-                    <button onclick="deletePet(${index})">Delete</button>
-                </td>
+                <td><button onclick="deletePet(${index})">Delete</button></td>
             </tr>
         `;
     });
@@ -165,14 +152,10 @@ if (petForm) {
     petForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        let name = document.getElementById("petName").value;
-        let type = document.getElementById("petType").value;
-        let breed = document.getElementById("breed").value;
-        let age = document.getElementById("age").value;
-        let gender = document.getElementById("gender").value;
         let ownerId = document.getElementById("petOwner").value;
 
-        let selectedOwner = savedOwners.find(function(owner) {
+        // Find the owner selected in the dropdown.
+        let selectedOwner = owners.find(function(owner) {
             return owner.id == ownerId;
         });
 
@@ -183,21 +166,19 @@ if (petForm) {
 
         let newPet = {
             id: Date.now(),
-            name: name,
-            type: type,
-            breed: breed,
-            age: age,
-            gender: gender,
+            name: document.getElementById("petName").value,
+            type: document.getElementById("petType").value,
+            breed: document.getElementById("breed").value,
+            age: document.getElementById("age").value,
+            gender: document.getElementById("gender").value,
             ownerId: ownerId,
             ownerName: selectedOwner.name
         };
 
         pets.push(newPet);
-
-        localStorage.setItem("pets", JSON.stringify(pets));
+        saveData("pets", pets);
 
         alert("Pet registered successfully!");
-
         petForm.reset();
         displayPets();
         loadOwners();
@@ -207,35 +188,30 @@ if (petForm) {
 function deletePet(index) {
     if (confirm("Are you sure you want to delete this pet?")) {
         pets.splice(index, 1);
-
-        localStorage.setItem("pets", JSON.stringify(pets));
-
+        saveData("pets", pets);
         displayPets();
     }
 }
 
 displayPets();
 
+// ==================================================
+// 3. APPOINTMENT MANAGEMENT
+// ==================================================
 
-// ==========================================
-// 4. APPOINTMENT MANAGEMENT
-// ==========================================
-
+let appointments = getSavedData("appointments");
 let appointmentForm = document.getElementById("appointmentForm");
-let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
-let savedPets = JSON.parse(localStorage.getItem("pets")) || [];
 
 function loadPets() {
-    let appointmentPet = document.getElementById("appointmentPet");
+    let petDropdown = document.getElementById("appointmentPet");
 
-    if (!appointmentPet) return;
+    if (!petDropdown) return;
 
-    appointmentPet.innerHTML = '<option value="">Select Pet</option>';
+    petDropdown.innerHTML = '<option value="">Select Pet</option>';
+    pets = getSavedData("pets");
 
-    savedPets = JSON.parse(localStorage.getItem("pets")) || [];
-
-    savedPets.forEach(function(pet) {
-        appointmentPet.innerHTML += `
+    pets.forEach(function(pet) {
+        petDropdown.innerHTML += `
             <option value="${pet.id}">${pet.name}</option>
         `;
     });
@@ -258,7 +234,6 @@ function displayAppointments() {
                 <td>${appointment.date}</td>
                 <td>${appointment.time}</td>
                 <td>${appointment.reason}</td>
-
                 <td>
                     <select onchange="updateAppointmentStatus(${index}, this.value)">
                         <option value="Pending" ${appointment.status === "Pending" ? "selected" : ""}>Pending</option>
@@ -266,10 +241,7 @@ function displayAppointments() {
                         <option value="Completed" ${appointment.status === "Completed" ? "selected" : ""}>Completed</option>
                     </select>
                 </td>
-
-                <td>
-                    <button onclick="cancelAppointment(${index})">Cancel</button>
-                </td>
+                <td><button onclick="cancelAppointment(${index})">Cancel</button></td>
             </tr>
         `;
     });
@@ -278,26 +250,24 @@ function displayAppointments() {
 if (appointmentForm) {
     loadPets();
 
-    let appointmentPet = document.getElementById("appointmentPet");
+    let petDropdown = document.getElementById("appointmentPet");
 
-    if (appointmentPet) {
-        appointmentPet.addEventListener("change", function() {
-
-            let selectedPet = savedPets.find(function(pet) {
-                return pet.id == appointmentPet.value;
-            });
-
-            document.getElementById("appointmentOwner").value =
-                selectedPet ? selectedPet.ownerName : "";
+    // Fill the owner name when a pet is selected.
+    petDropdown.addEventListener("change", function() {
+        let selectedPet = pets.find(function(pet) {
+            return pet.id == petDropdown.value;
         });
-    }
+
+        document.getElementById("appointmentOwner").value =
+            selectedPet ? selectedPet.ownerName : "";
+    });
 
     appointmentForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        let petId = document.getElementById("appointmentPet").value;
+        let petId = petDropdown.value;
 
-        let selectedPet = savedPets.find(function(pet) {
+        let selectedPet = pets.find(function(pet) {
             return pet.id == petId;
         });
 
@@ -306,30 +276,22 @@ if (appointmentForm) {
             return;
         }
 
-        let doctor = document.getElementById("doctor").value;
-        let date = document.getElementById("appointmentDate").value;
-        let time = document.getElementById("appointmentTime").value;
-        let reason = document.getElementById("reason").value;
-
         let newAppointment = {
             id: Date.now(),
             petName: selectedPet.name,
             ownerName: selectedPet.ownerName,
-            doctor: doctor,
-            date: date,
-            time: time,
-            reason: reason,
+            doctor: document.getElementById("doctor").value,
+            date: document.getElementById("appointmentDate").value,
+            time: document.getElementById("appointmentTime").value,
+            reason: document.getElementById("reason").value,
             status: "Pending"
         };
 
         appointments.push(newAppointment);
-
-        localStorage.setItem("appointments", JSON.stringify(appointments));
+        saveData("appointments", appointments);
 
         alert("Appointment booked successfully!");
-
         appointmentForm.reset();
-
         document.getElementById("appointmentOwner").value = "";
 
         displayAppointments();
@@ -337,48 +299,43 @@ if (appointmentForm) {
     });
 }
 
+// Change an appointment's status.
 function updateAppointmentStatus(index, newStatus) {
     appointments[index].status = newStatus;
-
-    localStorage.setItem("appointments", JSON.stringify(appointments));
-
+    saveData("appointments", appointments);
     displayAppointments();
 
     alert("Appointment status updated!");
 }
 
+// Cancel and remove an appointment.
 function cancelAppointment(index) {
     if (confirm("Are you sure you want to cancel this appointment?")) {
         appointments.splice(index, 1);
-
-        localStorage.setItem("appointments", JSON.stringify(appointments));
-
+        saveData("appointments", appointments);
         displayAppointments();
     }
 }
 
 displayAppointments();
 
+// ==================================================
+// 4. BILLING MANAGEMENT
+// ==================================================
 
-// ==========================================
-// 5. BILLING MANAGEMENT
-// ==========================================
-
+let bills = getSavedData("bills");
 let billingForm = document.getElementById("billingForm");
-let bills = JSON.parse(localStorage.getItem("bills")) || [];
-let billingPets = JSON.parse(localStorage.getItem("pets")) || [];
 
 function loadBillingPets() {
-    let billPet = document.getElementById("billPet");
+    let petDropdown = document.getElementById("billPet");
 
-    if (!billPet) return;
+    if (!petDropdown) return;
 
-    billPet.innerHTML = '<option value="">Select Pet</option>';
+    petDropdown.innerHTML = '<option value="">Select Pet</option>';
+    pets = getSavedData("pets");
 
-    billingPets = JSON.parse(localStorage.getItem("pets")) || [];
-
-    billingPets.forEach(function(pet) {
-        billPet.innerHTML += `
+    pets.forEach(function(pet) {
+        petDropdown.innerHTML += `
             <option value="${pet.id}">${pet.name}</option>
         `;
     });
@@ -402,9 +359,7 @@ function displayBills() {
                 <td>₹${bill.other}</td>
                 <td>₹${bill.total}</td>
                 <td>${bill.status}</td>
-                <td>
-                    <button onclick="printBill(${bill.id})">Print</button>
-                </td>
+                <td><button onclick="printBill(${bill.id})">Print</button></td>
             </tr>
         `;
     });
@@ -413,27 +368,23 @@ function displayBills() {
 if (billingForm) {
     loadBillingPets();
 
-    let billPet = document.getElementById("billPet");
+    let petDropdown = document.getElementById("billPet");
 
-    if (billPet) {
-        billPet.addEventListener("change", function() {
-
-            let selectedPet = billingPets.find(function(pet) {
-                return pet.id == billPet.value;
-            });
-
-            document.getElementById("billOwner").value =
-                selectedPet ? selectedPet.ownerName : "";
+    // Fill the owner name when a pet is selected.
+    petDropdown.addEventListener("change", function() {
+        let selectedPet = pets.find(function(pet) {
+            return pet.id == petDropdown.value;
         });
-    }
+
+        document.getElementById("billOwner").value =
+            selectedPet ? selectedPet.ownerName : "";
+    });
 
     billingForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        let petId = document.getElementById("billPet").value;
-
-        let selectedPet = billingPets.find(function(pet) {
-            return pet.id == petId;
+        let selectedPet = pets.find(function(pet) {
+            return pet.id == petDropdown.value;
         });
 
         if (!selectedPet) {
@@ -444,7 +395,6 @@ if (billingForm) {
         let consultation = Number(document.getElementById("consultationFee").value) || 0;
         let medicine = Number(document.getElementById("medicineFee").value) || 0;
         let other = Number(document.getElementById("otherFee").value) || 0;
-        let status = document.getElementById("paymentStatus").value;
 
         let newBill = {
             id: Date.now(),
@@ -454,17 +404,14 @@ if (billingForm) {
             medicine: medicine,
             other: other,
             total: consultation + medicine + other,
-            status: status
+            status: document.getElementById("paymentStatus").value
         };
 
         bills.push(newBill);
-
-        localStorage.setItem("bills", JSON.stringify(bills));
+        saveData("bills", bills);
 
         alert("Bill generated successfully!");
-
         billingForm.reset();
-
         document.getElementById("billOwner").value = "";
 
         displayBills();
@@ -472,6 +419,7 @@ if (billingForm) {
     });
 }
 
+// Create a printable receipt for one bill.
 function printBill(id) {
     let bill = bills.find(function(item) {
         return item.id === id;
@@ -487,12 +435,13 @@ function printBill(id) {
     }
 
     printWindow.document.write(`
+        <!DOCTYPE html>
         <html>
         <head>
             <title>PetCare Clinic Bill</title>
             <style>
                 body {
-                    font-family: Arial;
+                    font-family: Arial, sans-serif;
                     padding: 30px;
                 }
                 h2 {
@@ -510,11 +459,9 @@ function printBill(id) {
                 }
             </style>
         </head>
-
         <body>
             <h2>PetCare Clinic</h2>
             <h3>Payment Receipt</h3>
-
             <p><b>Bill ID:</b> ${bill.id}</p>
             <p><b>Pet Name:</b> ${bill.petName}</p>
             <p><b>Owner Name:</b> ${bill.ownerName}</p>
@@ -545,130 +492,126 @@ function printBill(id) {
 
 displayBills();
 
+// ==================================================
+// 5. DASHBOARD
+// ==================================================
 
-// ==========================================
-// 6. DASHBOARD STATISTICS
-// ==========================================
+function updateDashboard() {
+    let savedOwners = getSavedData("owners");
+    let savedPets = getSavedData("pets");
+    let savedAppointments = getSavedData("appointments");
+    let savedBills = getSavedData("bills");
 
-let dashboardOwners = JSON.parse(localStorage.getItem("owners")) || [];
-let dashboardPets = JSON.parse(localStorage.getItem("pets")) || [];
-let dashboardAppointments = JSON.parse(localStorage.getItem("appointments")) || [];
-let dashboardBills = JSON.parse(localStorage.getItem("bills")) || [];
+    let ownersNumber = document.getElementById("totalOwners");
+    let petsNumber = document.getElementById("totalPets");
+    let appointmentsNumber = document.getElementById("totalAppointments");
+    let pendingBillsNumber = document.getElementById("pendingBills");
 
-let totalOwners = document.getElementById("totalOwners");
+    if (ownersNumber) ownersNumber.innerText = savedOwners.length;
+    if (petsNumber) petsNumber.innerText = savedPets.length;
+    if (appointmentsNumber) appointmentsNumber.innerText = savedAppointments.length;
 
-if (totalOwners) {
-    totalOwners.innerText = dashboardOwners.length;
+    if (pendingBillsNumber) {
+        let pendingCount = savedBills.filter(function(bill) {
+            return bill.status === "Pending";
+        }).length;
+
+        pendingBillsNumber.innerText = pendingCount;
+    }
+
+    // Show recent appointments on the dashboard.
+    let dashboardList = document.getElementById("dashboardAppointments");
+
+    if (dashboardList) {
+        dashboardList.innerHTML = "";
+
+        savedAppointments.slice(-5).reverse().forEach(function(appointment) {
+            dashboardList.innerHTML += `
+                <tr>
+                    <td>${appointment.petName}</td>
+                    <td>${appointment.ownerName}</td>
+                    <td>${appointment.doctor}</td>
+                    <td>${appointment.date}</td>
+                    <td>${appointment.status}</td>
+                </tr>
+            `;
+        });
+    }
 }
 
-let totalPets = document.getElementById("totalPets");
+updateDashboard();
 
-if (totalPets) {
-    totalPets.innerText = dashboardPets.length;
+// ==================================================
+// 6. REPORTS
+// ==================================================
+
+function displayReports() {
+    let savedOwners = getSavedData("owners");
+    let savedPets = getSavedData("pets");
+    let savedAppointments = getSavedData("appointments");
+    let savedBills = getSavedData("bills");
+
+    let ownersNumber = document.getElementById("totalOwners");
+    let petsNumber = document.getElementById("totalPets");
+    let appointmentsNumber = document.getElementById("totalAppointments");
+    let billsNumber = document.getElementById("totalBills");
+    let revenueText = document.getElementById("totalRevenue");
+
+    if (ownersNumber) ownersNumber.innerText = savedOwners.length;
+    if (petsNumber) petsNumber.innerText = savedPets.length;
+    if (appointmentsNumber) appointmentsNumber.innerText = savedAppointments.length;
+    if (billsNumber) billsNumber.innerText = savedBills.length;
+
+    // Add only Paid bills to the revenue.
+    if (revenueText) {
+        let totalRevenue = 0;
+
+        savedBills.forEach(function(bill) {
+            if (bill.status === "Paid") {
+                totalRevenue += Number(bill.total);
+            }
+        });
+
+        revenueText.innerText = "₹" + totalRevenue;
+    }
+
+    // Display all appointment records in the report.
+    let appointmentReport = document.getElementById("reportAppointments");
+
+    if (appointmentReport) {
+        appointmentReport.innerHTML = "";
+
+        savedAppointments.forEach(function(appointment) {
+            appointmentReport.innerHTML += `
+                <tr>
+                    <td>${appointment.petName}</td>
+                    <td>${appointment.ownerName}</td>
+                    <td>${appointment.doctor}</td>
+                    <td>${appointment.date}</td>
+                    <td>${appointment.status}</td>
+                </tr>
+            `;
+        });
+    }
+
+    // Display all bill records in the report.
+    let billReport = document.getElementById("reportBills");
+
+    if (billReport) {
+        billReport.innerHTML = "";
+
+        savedBills.forEach(function(bill) {
+            billReport.innerHTML += `
+                <tr>
+                    <td>${bill.id}</td>
+                    <td>${bill.petName}</td>
+                    <td>${bill.ownerName}</td>
+                    <td>₹${bill.total}</td>
+                    <td>${bill.status}</td>
+                </tr>
+            `;
+        });
+    }
 }
 
-let totalAppointments = document.getElementById("totalAppointments");
-
-if (totalAppointments) {
-    totalAppointments.innerText = dashboardAppointments.length;
-}
-
-let pendingBills = document.getElementById("pendingBills");
-
-if (pendingBills) {
-    let pendingCount = dashboardBills.filter(function(bill) {
-        return bill.status === "Pending";
-    }).length;
-
-    pendingBills.innerText = pendingCount;
-}
-
-
-// ==========================================
-// 7. REPORTS MANAGEMENT
-// ==========================================
-
-let reportOwners = JSON.parse(localStorage.getItem("owners")) || [];
-let reportPets = JSON.parse(localStorage.getItem("pets")) || [];
-let reportAppointments = JSON.parse(localStorage.getItem("appointments")) || [];
-let reportBills = JSON.parse(localStorage.getItem("bills")) || [];
-
-let reportTotalOwners = document.getElementById("totalOwners");
-
-if (reportTotalOwners) {
-    reportTotalOwners.innerText = reportOwners.length;
-}
-
-let reportTotalPets = document.getElementById("totalPets");
-
-if (reportTotalPets) {
-    reportTotalPets.innerText = reportPets.length;
-}
-
-let reportTotalAppointments = document.getElementById("totalAppointments");
-
-if (reportTotalAppointments) {
-    reportTotalAppointments.innerText = reportAppointments.length;
-}
-
-let totalBills = document.getElementById("totalBills");
-
-if (totalBills) {
-    totalBills.innerText = reportBills.length;
-}
-
-// Calculate total revenue from paid bills
-
-let totalRevenue = document.getElementById("totalRevenue");
-
-if (totalRevenue) {
-    let revenue = 0;
-
-    reportBills.forEach(function(bill) {
-        if (bill.status === "Paid") {
-            revenue += Number(bill.total);
-        }
-    });
-
-    totalRevenue.innerText = "₹" + revenue;
-}
-
-// Display appointment report
-
-let reportAppointmentList = document.getElementById("reportAppointments");
-
-if (reportAppointmentList) {
-    reportAppointmentList.innerHTML = "";
-
-    reportAppointments.forEach(function(appointment) {
-        reportAppointmentList.innerHTML += `
-            <tr>
-                <td>${appointment.petName}</td>
-                <td>${appointment.ownerName}</td>
-                <td>${appointment.doctor}</td>
-                <td>${appointment.date}</td>
-                <td>${appointment.status}</td>
-            </tr>
-        `;
-    });
-}
-
-// Display billing report
-
-let reportBillList = document.getElementById("reportBills");
-
-if (reportBillList) {
-    reportBillList.innerHTML = "";
-
-    reportBills.forEach(function(bill) {
-        reportBillList.innerHTML += `
-            <tr>
-                <td>${bill.id}</td>
-                <td>${bill.petName}</td>
-                <td>${bill.ownerName}</td>
-                <td>₹${bill.total}</td>
-                <td>${bill.status}</td>
-            </tr>
-        `;
-    });
-}
+displayReports();

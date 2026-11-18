@@ -1,122 +1,94 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clinic Reports</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <aside class="sidebar">
+    <h2>PetCare Clinic</h2>
+    <p class="small-text">Receptionist Panel</p>
+    <nav>
+        <a href="index.html" >Dashboard</a>
+        <a href="owners.html" >Pet Owners</a>
+        <a href="pets.html" >Pets</a>
+        <a href="appointments.html" >Appointments</a>
+        <a href="billing.html" >Billing</a>
+        <a href="reports.html" class="active">Reports</a>
+    </nav>
+</aside>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>PetCare Clinic</h2>
-        <p class="small-text">Receptionist Panel</p>
-
-        <ul>
-            <li><a href="index.html">Dashboard</a></li>
-            <li><a href="owners.html">Pet Owners</a></li>
-            <li><a href="pets.html">Pets</a></li>
-            <li><a href="appointments.html">Appointments</a></li>
-            <li><a href="billing.html">Billing</a></li>
-            <li><a href="reports.html" class="active">Reports</a></li>
-        </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main">
-
-        <div class="header">
-            <h2>Clinic Reports</h2>
+    <main class="main">
+        <header class="header">
+            <h1>Clinic Reports</h1>
             <p>Welcome, Receptionist!</p>
-        </div>
+        </header>
 
-        <!-- Report Cards -->
-        <div class="cards">
-
+        <section class="cards">
             <div class="card">
                 <h3>Total Owners</h3>
-                <h1 id="totalOwners">0</h1>
+                <p class="number" id="totalOwners">0</p>
             </div>
-
             <div class="card">
                 <h3>Total Pets</h3>
-                <h1 id="totalPets">0</h1>
+                <p class="number" id="totalPets">0</p>
             </div>
-
             <div class="card">
                 <h3>Total Appointments</h3>
-                <h1 id="totalAppointments">0</h1>
+                <p class="number" id="totalAppointments">0</p>
             </div>
-
             <div class="card">
                 <h3>Total Bills</h3>
-                <h1 id="totalBills">0</h1>
+                <p class="number" id="totalBills">0</p>
             </div>
+        </section>
 
-        </div>
-
-        <!-- Revenue Section -->
-        <div class="appointment-section">
-
+        <section class="appointment-section">
             <h2>Payment Summary</h2>
-
             <h3>Total Revenue</h3>
-            <h1 id="totalRevenue" style="color:#245c48;">
-                ₹0
-            </h1>
+            <p class="revenue" id="totalRevenue">₹0</p>
+            <p class="info-text">Revenue from paid bills only.</p>
+        </section>
 
-            <p>Revenue from paid bills only.</p>
-
-        </div>
-
-        <!-- Appointment Report -->
-        <div class="appointment-section">
-
+        <section class="appointment-section">
             <h2>Appointment Report</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pet Name</th>
+                            <th>Owner Name</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportAppointments"></tbody>
+                </table>
+            </div>
+        </section>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pet Name</th>
-                        <th>Owner Name</th>
-                        <th>Doctor</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-
-                <tbody id="reportAppointments"></tbody>
-
-            </table>
-
-        </div>
-
-        <!-- Billing Report -->
-        <div class="appointment-section">
-
+        <section class="appointment-section">
             <h2>Billing Report</h2>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Bill ID</th>
-                        <th>Pet Name</th>
-                        <th>Owner</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-
-                <tbody id="reportBills"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Bill ID</th>
+                            <th>Pet Name</th>
+                            <th>Owner</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportBills"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
-
 </body>
 </html>

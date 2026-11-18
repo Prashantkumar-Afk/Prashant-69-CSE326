@@ -1,53 +1,43 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Appointment Management</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <aside class="sidebar">
+    <h2>PetCare Clinic</h2>
+    <p class="small-text">Receptionist Panel</p>
+    <nav>
+        <a href="index.html" >Dashboard</a>
+        <a href="owners.html" >Pet Owners</a>
+        <a href="pets.html" >Pets</a>
+        <a href="appointments.html" class="active">Appointments</a>
+        <a href="billing.html" >Billing</a>
+        <a href="reports.html" >Reports</a>
+    </nav>
+</aside>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>PetCare Clinic</h2>
-        <p class="small-text">Receptionist Panel</p>
-
-        <ul>
-            <li><a href="index.html">Dashboard</a></li>
-            <li><a href="owners.html">Pet Owners</a></li>
-            <li><a href="pets.html">Pets</a></li>
-            <li><a href="appointments.html" class="active">Appointments</a></li>
-            <li><a href="billing.html">Billing</a></li>
-            <li><a href="reports.html">Reports</a></li>
-        </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main">
-
-        <div class="header">
-            <h2>Appointment Management</h2>
+    <main class="main">
+        <header class="header">
+            <h1>Appointment Management</h1>
             <p>Welcome, Receptionist!</p>
-        </div>
+        </header>
 
-        <!-- Appointment Form -->
-        <div class="appointment-section">
-
+        <section class="appointment-section">
             <h2>Book New Appointment</h2>
-
             <form id="appointmentForm">
-
-                <label>Select Pet</label>
+                <label for="appointmentPet">Select Pet</label>
                 <select id="appointmentPet" required>
                     <option value="">Select Pet</option>
                 </select>
 
-                <label>Owner Name</label>
-                <input type="text" id="appointmentOwner"
-                placeholder="Owner name" readonly>
+                <label for="appointmentOwner">Owner Name</label>
+                <input type="text" id="appointmentOwner" placeholder="Owner name" readonly>
 
-                <label>Select Doctor</label>
+                <label for="doctor">Select Doctor</label>
                 <select id="doctor" required>
                     <option value="">Select Doctor</option>
                     <option value="Dr. Sharma">Dr. Sharma</option>
@@ -55,52 +45,42 @@
                     <option value="Dr. Singh">Dr. Singh</option>
                 </select>
 
-                <label>Appointment Date</label>
+                <label for="appointmentDate">Appointment Date</label>
                 <input type="date" id="appointmentDate" required>
 
-                <label>Appointment Time</label>
+                <label for="appointmentTime">Appointment Time</label>
                 <input type="time" id="appointmentTime" required>
 
-                <label>Reason for Visit</label>
-                <textarea id="reason"
-                placeholder="Enter reason for appointment"
-                required></textarea>
+                <label for="reason">Reason for Visit</label>
+                <textarea id="reason" placeholder="Enter reason for appointment" required></textarea>
 
                 <button type="submit">Book Appointment</button>
-
             </form>
+        </section>
 
-        </div>
-
-        <!-- Appointment List -->
-        <div class="appointment-section">
-
+        <section class="appointment-section">
             <h2>Appointment Records</h2>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Pet</th>
-                        <th>Owner</th>
-                        <th>Doctor</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Reason</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-
-                <tbody id="appointmentList"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Pet</th>
+                            <th>Owner</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointmentList"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
     <script src="script.js"></script>
-
 </body>
 </html>

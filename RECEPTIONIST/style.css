@@ -1,6 +1,4 @@
-
-/* Basic Page Styling */
-
+/* Basic settings used on every page */
 * {
     margin: 0;
     padding: 0;
@@ -10,16 +8,18 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f7f5;
+    color: #26332d;
 }
 
-/* Sidebar */
-
+/* Left navigation menu */
 .sidebar {
     width: 230px;
-    height: 100vh;
+    min-height: 100vh;
     background-color: #245c48;
     color: white;
     position: fixed;
+    top: 0;
+    left: 0;
     padding: 25px 15px;
 }
 
@@ -28,123 +28,96 @@ body {
 }
 
 .small-text {
-    font-size: 13px;
     color: #c9dfd3;
-    margin-bottom: 35px;
+    font-size: 13px;
+    margin-bottom: 30px;
 }
 
-.sidebar ul {
-    list-style: none;
-}
-
-.sidebar li {
-    padding: 14px;
-    margin-bottom: 8px;
-    cursor: pointer;
+.sidebar nav a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 13px;
+    margin-bottom: 7px;
     border-radius: 5px;
 }
 
-.sidebar li:hover,
-.sidebar li.active {
+.sidebar nav a:hover,
+.sidebar nav a.active {
     background-color: #3b8065;
 }
 
-/* Main Content */
-
+/* Main page area */
 .main {
     margin-left: 230px;
     padding: 30px;
 }
 
-/* Header */
-
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 15px;
     margin-bottom: 30px;
 }
 
-/* Dashboard Cards */
+.header h1 {
+    font-size: 27px;
+}
 
+/* Dashboard and report number cards */
 .cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
 }
 
-.card {
+.card,
+.appointment-section {
     background-color: white;
     padding: 25px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .card h3 {
-    font-size: 16px;
     color: #666;
+    font-size: 16px;
     margin-bottom: 15px;
 }
 
-.card h1 {
+.number {
     color: #245c48;
+    font-size: 30px;
+    font-weight: bold;
 }
 
-/* Appointment Section */
-
 .appointment-section {
-    background-color: white;
     margin-top: 30px;
-    padding: 25px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .appointment-section h2 {
     margin-bottom: 20px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #e5f0e9;
+.revenue {
     color: #245c48;
+    font-size: 30px;
+    font-weight: bold;
+    margin: 10px 0;
 }
 
-/* Sidebar Links */
-
-.sidebar a {
-    display: block;
-    color: white;
-    text-decoration: none;
-    padding: 14px;
-    border-radius: 5px;
+.info-text {
+    color: #666;
+    margin: 10px 0;
 }
 
-.sidebar a:hover,
-.sidebar a.active {
-    background-color: #3b8065;
-}
-
-
-
-
-/* Owner Registration Form */
-
+/* Form labels and input boxes */
 form {
     margin-top: 20px;
 }
 
-form label {
+label {
     display: block;
     margin-top: 15px;
     margin-bottom: 7px;
@@ -152,20 +125,31 @@ form label {
     color: #444;
 }
 
-form input,
-form textarea {
+input,
+select,
+textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    background-color: white;
+    font-family: Arial, sans-serif;
     font-size: 14px;
 }
 
-form textarea {
-    height: 80px;
+textarea {
+    min-height: 80px;
     resize: vertical;
 }
 
+input:focus,
+select:focus,
+textarea:focus {
+    outline: 2px solid #9bc9b2;
+    border-color: #245c48;
+}
+
+/* Main form buttons */
 form button {
     margin-top: 20px;
     padding: 12px 25px;
@@ -180,40 +164,32 @@ form button:hover {
     background-color: #3b8065;
 }
 
-
-
-
-
-
-
-
-/* Pet Registration Styling */
-
-form select {
+/* Tables */
+.table-wrapper {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: white;
-    font-size: 14px;
+    overflow-x: auto;
 }
 
-form button {
-    background-color: #245c48;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
 }
 
-form button:hover {
-    background-color: #3b8065;
+th,
+td {
+    padding: 13px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
 }
 
-/* Table Button */
+th {
+    background-color: #e5f0e9;
+    color: #245c48;
+}
 
+/* Delete, cancel and print buttons inside tables */
 table button {
     background-color: #d9534f;
     color: white;
@@ -223,36 +199,30 @@ table button {
     cursor: pointer;
 }
 
+table button:hover {
+    background-color: #b93d39;
+}
 
-
-
-
-
-
-/* Responsive Design */
-
+/* Make the website fit tablets and mobile phones */
 @media screen and (max-width: 900px) {
-
     .cards {
         grid-template-columns: repeat(2, 1fr);
     }
-
 }
 
 @media screen and (max-width: 600px) {
-
     .sidebar {
         width: 100%;
-        height: auto;
-        position: relative;
+        min-height: auto;
+        position: static;
     }
 
-    .sidebar ul {
+    .sidebar nav {
         display: flex;
         flex-wrap: wrap;
     }
 
-    .sidebar li {
+    .sidebar nav a {
         margin: 3px;
     }
 
@@ -269,4 +239,12 @@ table button {
         display: block;
     }
 
+    .header p {
+        margin-top: 8px;
+    }
+
+    .card,
+    .appointment-section {
+        padding: 18px;
+    }
 }
